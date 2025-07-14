@@ -1,0 +1,4 @@
+Patient_ID,Condition,Allergy,Alert
+P001,Asthma,NSAIDs,⚠️ Avoid NSAIDs
+P002,Diabetes,None,✅ No critical risk
+P003,Kidney Disease,Penicillin,⚠️ Use kidney-safe medication
