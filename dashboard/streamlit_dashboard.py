@@ -12,7 +12,7 @@ st.set_page_config(
 # --- Load Data ---
 @st.cache_data
 def load_data():
-    report_path = os.path.join("..", "reports", "emar_risk_report.csv")
+    report_path = os.path.join("reports", "emar_risk_report.csv")
     if os.path.exists(report_path):
         df = pd.read_csv(report_path)
         # Assuming 'timestamp' column exists and is in a readable format
