@@ -1,0 +1,42 @@
+INFO:     Started server process [20852]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+Received data: {'patient_id': 'patient_95', 'medication': 'Amlodipine', 'dose': '10mg', 'timestamp': 1752552227.7686417}, Predicted Risk: High
+INFO:     127.0.0.1:62855 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_7', 'medication': 'Lisinopril', 'dose': '10mg', 'timestamp': 1752552229.809308}, Predicted Risk: High
+INFO:     127.0.0.1:62862 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_28', 'medication': 'Metformin', 'dose': '20mg', 'timestamp': 1752552231.8182068}, Predicted Risk: Low
+INFO:     127.0.0.1:62863 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_5', 'medication': 'Simvastatin', 'dose': '10mg', 'timestamp': 1752552233.8309948}, Predicted Risk: High
+INFO:     127.0.0.1:62864 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_36', 'medication': 'Metformin', 'dose': '50mg', 'timestamp': 1752552235.8437433}, Predicted Risk: Low
+INFO:     127.0.0.1:62865 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_74', 'medication': 'Lisinopril', 'dose': '40mg', 'timestamp': 1752552237.8565156}, Predicted Risk: Low
+INFO:     127.0.0.1:62866 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_67', 'medication': 'Simvastatin', 'dose': '10mg', 'timestamp': 1752552239.8679354}, Predicted Risk: High
+INFO:     127.0.0.1:62867 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_1', 'medication': 'Metformin', 'dose': '20mg', 'timestamp': 1752552241.8857205}, Predicted Risk: Low
+INFO:     127.0.0.1:62869 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_80', 'medication': 'Amlodipine', 'dose': '50mg', 'timestamp': 1752552243.8978026}, Predicted Risk: High
+INFO:     127.0.0.1:62871 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_42', 'medication': 'Simvastatin', 'dose': '10mg', 'timestamp': 1752552245.914154}, Predicted Risk: High
+INFO:     127.0.0.1:62874 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_18', 'medication': 'Simvastatin', 'dose': '10mg', 'timestamp': 1752552247.926485}, Predicted Risk: High
+INFO:     127.0.0.1:62875 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_23', 'medication': 'Lisinopril', 'dose': '10mg', 'timestamp': 1752552249.9503398}, Predicted Risk: High
+INFO:     127.0.0.1:62876 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_14', 'medication': 'Amlodipine', 'dose': '50mg', 'timestamp': 1752552251.9678206}, Predicted Risk: High
+INFO:     127.0.0.1:62877 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_14', 'medication': 'Amlodipine', 'dose': '20mg', 'timestamp': 1752552253.9895763}, Predicted Risk: High
+INFO:     127.0.0.1:62878 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_99', 'medication': 'Simvastatin', 'dose': '50mg', 'timestamp': 1752552255.998336}, Predicted Risk: Low
+INFO:     127.0.0.1:62879 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_91', 'medication': 'Metformin', 'dose': '50mg', 'timestamp': 1752552258.0078933}, Predicted Risk: Low
+INFO:     127.0.0.1:62883 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_34', 'medication': 'Metformin', 'dose': '50mg', 'timestamp': 1752552260.0180752}, Predicted Risk: Low
+INFO:     127.0.0.1:62886 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_26', 'medication': 'Lisinopril', 'dose': '50mg', 'timestamp': 1752552262.034333}, Predicted Risk: Low
+INFO:     127.0.0.1:62889 - "POST /ingest HTTP/1.1" 200 OK
+Received data: {'patient_id': 'patient_86', 'medication': 'Metformin', 'dose': '10mg', 'timestamp': 1752552264.0445526}, Predicted Risk: High
+INFO:     127.0.0.1:62890 - "POST /ingest HTTP/1.1" 200 OK

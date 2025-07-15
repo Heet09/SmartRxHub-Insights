@@ -1,32 +1,57 @@
 import streamlit as st
 import pandas as pd
-import os
+import requests
+import time
+import numpy as np
 
-# File path to the report
-report_path = os.path.join("..", "reports", "emar_risk_report.csv")
+st.set_page_config(layout="wide")
 
-st.set_page_config(page_title="EMAR Risk Alert Dashboard", layout="centered")
+API_URL = "http://127.0.0.1:8000/ingest"
 
-st.title("📊 EMAR Risk Alert Dashboard")
-st.markdown("Get real-time alerts for high-risk patients.")
+# --- Functions ---
 
-# Load report
-if os.path.exists(report_path):
-    df = pd.read_csv(report_path)
-    st.success("Risk report loaded successfully.")
-    
-    # Show all data
-    st.subheader("🩺 Patient Risk Summary")
-    st.dataframe(df, use_container_width=True)
+def get_live_data():
+    """Simulates fetching live data from a source."""
+    # In a real app, this would connect to a database or message queue
+    # For this demo, we'll just call our own API
+    data = {
+        "patient_id": f"patient_{np.random.randint(1, 100)}",
+        "medication": np.random.choice(["Lisinopril", "Metformin", "Simvastatin", "Amlodipine"]),
+        "dose": f"{np.random.choice([10, 20, 40, 50])}mg",
+        "timestamp": time.time()
+    }
+    response = requests.post(API_URL, json=data)
+    return response.json()
 
-    # Filter by Alert Type
-    st.subheader("🔍 Filter by Alert Type")
-    alert_type = st.selectbox("Choose alert filter", ["All", "⚠️ Avoid NSAIDs", "⚠️ Use kidney-safe medication", "✅ No critical risk"])
-    
-    if alert_type != "All":
-        filtered = df[df['Alert'] == alert_type]
-        st.dataframe(filtered, use_container_width=True)
-    else:
-        st.dataframe(df, use_container_width=True)
-else:
-    st.error("Risk report not found. Please run emar_risk_scoring.py first.")
+# --- UI Layout ---
+
+st.title("SmartRxHub-Insights: Real-time Risk Dashboard")
+
+# --- Placeholders for live updates ---
+placeholder = st.empty()
+
+# --- Data Storage (session state) ---
+if 'events' not in st.session_state:
+    st.session_state.events = []
+
+# --- Main Loop ---
+while True:
+    new_event = get_live_data()
+    st.session_state.events.append(new_event)
+
+    with placeholder.container():
+        # --- High-Risk Events ---
+        st.subheader("High-Risk Events")
+        high_risk_events = [e for e in st.session_state.events if e.get('predicted_risk') == 'High']
+        if high_risk_events:
+            high_risk_df = pd.DataFrame(high_risk_events)
+            st.dataframe(high_risk_df)
+        else:
+            st.info("No high-risk events detected.")
+
+        # --- All Events Log ---
+        st.subheader("Live Event Log")
+        all_events_df = pd.DataFrame(st.session_state.events)
+        st.dataframe(all_events_df)
+
+    time.sleep(2) # Simulate a 2-second delay between new events

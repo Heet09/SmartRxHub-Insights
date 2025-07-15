@@ -1,2 +1,8 @@
 pandas
 streamlit
+fastapi
+uvicorn
+scikit-learn
+joblib
+ruff
+requests

@@ -3,11 +3,9 @@ name: EMAR Risk Engine CI/CD
 on:
   push:
     branches: [ main ]
-  schedule:
-    - cron: '0 2 * * *'  # Runs daily at 2 AM UTC
 
 jobs:
-  run-emar-risk-engine:
+  test-and-train:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,13 +22,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run risk scoring engine
-      run: python scripts/emar_risk_scoring.py
+    - name: Lint with ruff
+      run: ruff check .
 
-    - name: Commit and push updated report (if generated)
-      run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        git add reports/emar_risk_report.csv || true
-        git commit -m "Daily update: EMAR risk report" || echo "No changes to commit"
-        git push || echo "No push needed"
+    - name: Train model
+      run: python ml/trainer.py
+
+    - name: Upload model artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: emar-risk-model
+        path: ml/emar_risk_model.joblib
