@@ -25,7 +25,7 @@ df['Alert'] = df.apply(risk_alert, axis=1)
 
 # Save report
 timestamp = datetime.now().strftime("%Y-%m-%d")
-report_path = os.path.join("reports", f"emar_risk_report.csv")
+report_path = os.path.join("reports", "emar_risk_report.csv")
 df.to_csv(report_path, index=False)
 
 print(f"✔️ EMAR Risk Report saved at: {report_path}")
