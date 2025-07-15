@@ -1,57 +1,87 @@
 import streamlit as st
 import pandas as pd
-import requests
-import time
-import numpy as np
+import os
 
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="SmartRxHub-Insights: eMAR Risk Dashboard",
+    page_icon="⚕️",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
-API_URL = "http://127.0.0.1:8000/ingest"
+# --- Load Data ---
+@st.cache_data
+def load_data():
+    report_path = os.path.join("..", "reports", "emar_risk_report.csv")
+    if os.path.exists(report_path):
+        df = pd.read_csv(report_path)
+        # Assuming 'timestamp' column exists and is in a readable format
+        # If not, you might need to adjust the following line
+        # df['Timestamp'] = pd.to_datetime(df['timestamp'], unit='s')
+        return df
+    return pd.DataFrame()
 
-# --- Functions ---
+df = load_data()
 
-def get_live_data():
-    """Simulates fetching live data from a source."""
-    # In a real app, this would connect to a database or message queue
-    # For this demo, we'll just call our own API
-    data = {
-        "patient_id": f"patient_{np.random.randint(1, 100)}",
-        "medication": np.random.choice(["Lisinopril", "Metformin", "Simvastatin", "Amlodipine"]),
-        "dose": f"{np.random.choice([10, 20, 40, 50])}mg",
-        "timestamp": time.time()
-    }
-    response = requests.post(API_URL, json=data)
-    return response.json()
+# --- Sidebar ---
+st.sidebar.title("Filters")
+if not df.empty:
+    patient_id = st.sidebar.multiselect(
+        "Select Patient ID:",
+        options=df["Patient_ID"].unique(),
+        default=df["Patient_ID"].unique(),
+    )
 
-# --- UI Layout ---
+    alert_level = st.sidebar.multiselect(
+        "Select Alert Level:",
+        options=df["Alert"].unique(),
+        default=df["Alert"].unique(),
+    )
 
-st.title("SmartRxHub-Insights: Real-time Risk Dashboard")
+    df_selection = df.query(
+        "Patient_ID == @patient_id & Alert == @alert_level"
+    )
+else:
+    st.sidebar.warning("No data available. Please run the risk scoring script.")
+    df_selection = pd.DataFrame()
 
-# --- Placeholders for live updates ---
-placeholder = st.empty()
 
-# --- Data Storage (session state) ---
-if 'events' not in st.session_state:
-    st.session_state.events = []
+# --- Main Page ---
+st.title("⚕️ SmartRxHub-Insights: eMAR Risk Dashboard")
+st.markdown("##")
 
-# --- Main Loop ---
-while True:
-    new_event = get_live_data()
-    st.session_state.events.append(new_event)
+if not df_selection.empty:
+    # --- Key Metrics ---
+    total_patients = df_selection["Patient_ID"].nunique()
+    total_alerts = len(df_selection)
+    high_risk_alerts = len(df_selection[df_selection["Alert"] != "✅ No critical risk"])
 
-    with placeholder.container():
-        # --- High-Risk Events ---
-        st.subheader("High-Risk Events")
-        high_risk_events = [e for e in st.session_state.events if e.get('predicted_risk') == 'High']
-        if high_risk_events:
-            high_risk_df = pd.DataFrame(high_risk_events)
-            st.dataframe(high_risk_df)
-        else:
-            st.info("No high-risk events detected.")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric(label="Total Patients", value=total_patients)
+    with col2:
+        st.metric(label="Total Alerts", value=total_alerts)
+    with col3:
+        st.metric(label="High-Risk Alerts", value=high_risk_alerts)
 
-        # --- All Events Log ---
-        st.subheader("Live Event Log")
-        all_events_df = pd.DataFrame(st.session_state.events)
-        st.dataframe(all_events_df)
+    st.markdown("---")
 
-    time.sleep(2) # Simulate a 2-second delay between new events
+    # --- Charts ---
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("Alerts per Patient")
+        alerts_per_patient = df_selection.groupby("Patient_ID")["Alert"].count().sort_values(ascending=False)
+        st.bar_chart(alerts_per_patient)
+
+    with col2:
+        st.subheader("Alert Level Distribution")
+        alert_distribution = df_selection["Alert"].value_counts()
+        st.bar_chart(alert_distribution)
+
+
+    # --- Data Table ---
+    st.subheader("Filtered Data")
+    st.dataframe(df_selection)
+
+else:
+    st.warning("No data to display based on the current filters.")
