@@ -1,51 +1,51 @@
 Patient_ID,Condition,Allergy,Alert
-P001,Arthritis,Dust,✅ No critical risk
-P002,Arthritis,Sulfa,✅ No critical risk
-P003,Asthma,Dust,✅ No critical risk
-P004,Hypertension,Pollen,✅ No critical risk
-P005,Hypertension,None,✅ No critical risk
-P006,Arthritis,None,✅ No critical risk
+P001,Asthma,Dust,✅ No critical risk
+P002,Hypertension,Penicillin,✅ No critical risk
+P003,Hypertension,Penicillin,✅ No critical risk
+P004,Kidney Disease,Pollen,⚠️ Use kidney-safe medication
+P005,Arthritis,Penicillin,✅ No critical risk
+P006,Diabetes,Penicillin,✅ No critical risk
 P007,Hypertension,Dust,✅ No critical risk
-P008,Kidney Disease,None,⚠️ Use kidney-safe medication
-P009,Arthritis,Penicillin,✅ No critical risk
-P010,Arthritis,Pollen,✅ No critical risk
-P011,Hypertension,NSAIDs,✅ No critical risk
-P012,Arthritis,Dust,✅ No critical risk
-P013,Arthritis,Sulfa,✅ No critical risk
-P014,None,Pollen,✅ No critical risk
-P015,Diabetes,Pollen,✅ No critical risk
-P016,Kidney Disease,None,⚠️ Use kidney-safe medication
-P017,Arthritis,Sulfa,✅ No critical risk
-P018,Asthma,Penicillin,✅ No critical risk
-P019,Arthritis,NSAIDs,✅ No critical risk
-P020,Arthritis,Dust,✅ No critical risk
-P021,Asthma,Pollen,✅ No critical risk
-P022,Diabetes,Penicillin,✅ No critical risk
-P023,Diabetes,Pollen,✅ No critical risk
-P024,Hypertension,Pollen,✅ No critical risk
-P025,Arthritis,Penicillin,✅ No critical risk
-P026,Asthma,Sulfa,✅ No critical risk
-P027,None,Pollen,✅ No critical risk
+P008,Asthma,None,✅ No critical risk
+P009,Hypertension,NSAIDs,✅ No critical risk
+P010,Arthritis,None,✅ No critical risk
+P011,Kidney Disease,Sulfa,⚠️ Use kidney-safe medication
+P012,Asthma,Penicillin,✅ No critical risk
+P013,Asthma,NSAIDs,⚠️ Avoid NSAIDs
+P014,None,None,✅ No critical risk
+P015,Hypertension,Dust,✅ No critical risk
+P016,Arthritis,Dust,✅ No critical risk
+P017,None,NSAIDs,✅ No critical risk
+P018,Arthritis,NSAIDs,✅ No critical risk
+P019,Hypertension,Dust,✅ No critical risk
+P020,Diabetes,NSAIDs,✅ No critical risk
+P021,Arthritis,NSAIDs,✅ No critical risk
+P022,None,Pollen,✅ No critical risk
+P023,Arthritis,None,✅ No critical risk
+P024,Diabetes,NSAIDs,✅ No critical risk
+P025,None,None,✅ No critical risk
+P026,None,Dust,✅ No critical risk
+P027,None,Penicillin,✅ No critical risk
 P028,Arthritis,Pollen,✅ No critical risk
-P029,Arthritis,Sulfa,✅ No critical risk
-P030,Asthma,NSAIDs,⚠️ Avoid NSAIDs
-P031,Arthritis,None,✅ No critical risk
-P032,Hypertension,Pollen,✅ No critical risk
-P033,None,Sulfa,✅ No critical risk
-P034,Kidney Disease,Sulfa,⚠️ Use kidney-safe medication
-P035,Kidney Disease,Pollen,⚠️ Use kidney-safe medication
-P036,None,Pollen,✅ No critical risk
-P037,Asthma,Sulfa,✅ No critical risk
-P038,Hypertension,Penicillin,✅ No critical risk
-P039,None,Pollen,✅ No critical risk
-P040,Asthma,Dust,✅ No critical risk
-P041,None,Dust,✅ No critical risk
-P042,Hypertension,None,✅ No critical risk
-P043,Asthma,Penicillin,✅ No critical risk
-P044,Diabetes,None,✅ No critical risk
-P045,Asthma,Sulfa,✅ No critical risk
-P046,Hypertension,None,✅ No critical risk
-P047,Hypertension,NSAIDs,✅ No critical risk
-P048,Asthma,Penicillin,✅ No critical risk
-P049,Diabetes,NSAIDs,✅ No critical risk
-P050,Hypertension,Sulfa,✅ No critical risk
+P029,Asthma,Pollen,✅ No critical risk
+P030,Hypertension,Dust,✅ No critical risk
+P031,Kidney Disease,Penicillin,⚠️ Use kidney-safe medication
+P032,Asthma,Sulfa,✅ No critical risk
+P033,Kidney Disease,NSAIDs,⚠️ Use kidney-safe medication
+P034,Hypertension,None,✅ No critical risk
+P035,Asthma,None,✅ No critical risk
+P036,Hypertension,None,✅ No critical risk
+P037,Asthma,None,✅ No critical risk
+P038,Arthritis,None,✅ No critical risk
+P039,Diabetes,NSAIDs,✅ No critical risk
+P040,None,Dust,✅ No critical risk
+P041,None,Pollen,✅ No critical risk
+P042,Diabetes,None,✅ No critical risk
+P043,Hypertension,None,✅ No critical risk
+P044,Hypertension,NSAIDs,✅ No critical risk
+P045,Arthritis,Dust,✅ No critical risk
+P046,Diabetes,Penicillin,✅ No critical risk
+P047,Diabetes,Penicillin,✅ No critical risk
+P048,Kidney Disease,NSAIDs,⚠️ Use kidney-safe medication
+P049,Hypertension,None,✅ No critical risk
+P050,Diabetes,Penicillin,✅ No critical risk
