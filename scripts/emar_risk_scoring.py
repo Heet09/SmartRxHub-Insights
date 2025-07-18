@@ -2,37 +2,74 @@
 import pandas as pd
 from datetime import datetime
 import os
-import numpy as np
+import joblib
+import json
+import random
 
-# Function to generate more diverse simulated patient data
-def generate_patient_data(num_patients=100):
-    patient_ids = [f'P{i:03d}' for i in range(1, num_patients + 1)]
-    conditions = np.random.choice(['Asthma', 'Diabetes', 'Kidney Disease', 'Hypertension', 'Arthritis', 'None'], size=num_patients)
-    allergies = np.random.choice(['NSAIDs', 'Penicillin', 'Sulfa', 'None', 'Pollen', 'Dust'], size=num_patients)
+# --- Load Model and Features ---
+model = joblib.load('ml/emar_risk_model.joblib')
+with open('ml/model_features.json', 'r') as f:
+    model_features = json.load(f)
+
+# --- Data Generation ---
+def generate_emar_data(num_records=100):
+    """Generates simulated eMAR data with conditions and allergies."""
+    patient_ids = [f'P{i:03d}' for i in range(1, num_records + 1)]
+    medications = ["Lisinopril", "Metformin", "Simvastatin", "Amlodipine"] * (num_records // 4)
+    doses = ["10mg", "20mg", "40mg", "50mg"] * (num_records // 4)
+    conditions = ["Hypertension", "Diabetes", "High Cholesterol", "Hypertension"] * (num_records // 4)
+    allergies = ["None", "None", "Sulfa", "None"] * (num_records // 4)
+    
+    random.shuffle(medications)
+    random.shuffle(doses)
+    random.shuffle(conditions)
+    random.shuffle(allergies)
 
     data = {
-        'Patient_ID': patient_ids,
-        'Condition': conditions,
-        'Allergy': allergies
+        'patient_id': patient_ids,
+        'medication': medications,
+        'dose': doses,
+        'condition': conditions,
+        'allergy': allergies
     }
     return pd.DataFrame(data)
 
-df = generate_patient_data(num_patients=50) # Generate 50 patients for demonstration
+# --- Risk Scoring ---
+def score_risk(df):
+    """Uses the loaded ML model to predict risk for the given data."""
+    # Prepare data for the model (must match the API and training script)
+    input_df = df.copy()
+    input_df['dose_mg'] = input_df['dose'].str.replace('mg', '').astype(int)
+    input_df = input_df.drop(columns=['dose', 'patient_id'])
 
-# Define simple rule-based alerts
-def risk_alert(row):
-    if row['Condition'].lower() == 'asthma' and 'nsaid' in row['Allergy'].lower():
-        return '⚠️ Avoid NSAIDs'
-    elif row['Condition'].lower() == 'kidney disease':
-        return '⚠️ Use kidney-safe medication'
-    else:
-        return '✅ No critical risk'
+    # One-hot encode and align columns
+    input_encoded = pd.get_dummies(input_df)
+    input_aligned = input_encoded.reindex(columns=model_features, fill_value=0)
 
-df['Alert'] = df.apply(risk_alert, axis=1)
+    # Predict the risk
+    predictions = model.predict(input_aligned)
+    
+    # Add predictions back to the original DataFrame
+    df['Predicted_Risk'] = ["High" if p == 1 else "Low" for p in predictions]
+    return df
 
-# Save report
-timestamp = datetime.now().strftime("%Y-%m-%d")
-report_path = os.path.join("reports", "emar_risk_report.csv")
-df.to_csv(report_path, index=False)
+# --- Main Execution ---
+def main():
+    """Main function to generate data, score it, and save the report."""
+    print("Generating enhanced simulated eMAR data...")
+    df_generated = generate_emar_data(num_records=100)
+    
+    print("Scoring data using the enhanced AI model...")
+    df_scored = score_risk(df_generated)
+    
+    # Save the report
+    report_path = os.path.join("reports", "emar_risk_report.csv")
+    df_scored.to_csv(report_path, index=False)
+    
+    print(f"Enhanced EMAR Risk Report saved at: {report_path}")
+    print("--- Report Preview ---")
+    print(df_scored.head())
+    print("--------------------")
 
-print(f"EMAR Risk Report saved at: {report_path}")
+if __name__ == "__main__":
+    main()

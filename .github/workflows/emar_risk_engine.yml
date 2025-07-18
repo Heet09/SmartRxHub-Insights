@@ -25,6 +25,9 @@ jobs:
     - name: Lint with ruff
       run: ruff check .
 
+    - name: Run tests
+      run: python -m pytest
+
     - name: Train model
       run: python ml/trainer.py
 

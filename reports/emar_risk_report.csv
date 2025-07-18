@@ -1,51 +1,101 @@
-Patient_ID,Condition,Allergy,Alert
-P001,Asthma,Dust,✅ No critical risk
-P002,Hypertension,Penicillin,✅ No critical risk
-P003,Hypertension,Penicillin,✅ No critical risk
-P004,Kidney Disease,Pollen,⚠️ Use kidney-safe medication
-P005,Arthritis,Penicillin,✅ No critical risk
-P006,Diabetes,Penicillin,✅ No critical risk
-P007,Hypertension,Dust,✅ No critical risk
-P008,Asthma,None,✅ No critical risk
-P009,Hypertension,NSAIDs,✅ No critical risk
-P010,Arthritis,None,✅ No critical risk
-P011,Kidney Disease,Sulfa,⚠️ Use kidney-safe medication
-P012,Asthma,Penicillin,✅ No critical risk
-P013,Asthma,NSAIDs,⚠️ Avoid NSAIDs
-P014,None,None,✅ No critical risk
-P015,Hypertension,Dust,✅ No critical risk
-P016,Arthritis,Dust,✅ No critical risk
-P017,None,NSAIDs,✅ No critical risk
-P018,Arthritis,NSAIDs,✅ No critical risk
-P019,Hypertension,Dust,✅ No critical risk
-P020,Diabetes,NSAIDs,✅ No critical risk
-P021,Arthritis,NSAIDs,✅ No critical risk
-P022,None,Pollen,✅ No critical risk
-P023,Arthritis,None,✅ No critical risk
-P024,Diabetes,NSAIDs,✅ No critical risk
-P025,None,None,✅ No critical risk
-P026,None,Dust,✅ No critical risk
-P027,None,Penicillin,✅ No critical risk
-P028,Arthritis,Pollen,✅ No critical risk
-P029,Asthma,Pollen,✅ No critical risk
-P030,Hypertension,Dust,✅ No critical risk
-P031,Kidney Disease,Penicillin,⚠️ Use kidney-safe medication
-P032,Asthma,Sulfa,✅ No critical risk
-P033,Kidney Disease,NSAIDs,⚠️ Use kidney-safe medication
-P034,Hypertension,None,✅ No critical risk
-P035,Asthma,None,✅ No critical risk
-P036,Hypertension,None,✅ No critical risk
-P037,Asthma,None,✅ No critical risk
-P038,Arthritis,None,✅ No critical risk
-P039,Diabetes,NSAIDs,✅ No critical risk
-P040,None,Dust,✅ No critical risk
-P041,None,Pollen,✅ No critical risk
-P042,Diabetes,None,✅ No critical risk
-P043,Hypertension,None,✅ No critical risk
-P044,Hypertension,NSAIDs,✅ No critical risk
-P045,Arthritis,Dust,✅ No critical risk
-P046,Diabetes,Penicillin,✅ No critical risk
-P047,Diabetes,Penicillin,✅ No critical risk
-P048,Kidney Disease,NSAIDs,⚠️ Use kidney-safe medication
-P049,Hypertension,None,✅ No critical risk
-P050,Diabetes,Penicillin,✅ No critical risk
+patient_id,medication,dose,condition,allergy,Predicted_Risk
+P001,Metformin,20mg,High Cholesterol,Sulfa,Low
+P002,Metformin,10mg,Diabetes,None,Low
+P003,Amlodipine,20mg,Hypertension,None,Low
+P004,Simvastatin,50mg,Diabetes,None,Low
+P005,Simvastatin,20mg,High Cholesterol,None,High
+P006,Lisinopril,40mg,High Cholesterol,None,High
+P007,Simvastatin,10mg,Hypertension,None,High
+P008,Metformin,40mg,Diabetes,None,Low
+P009,Lisinopril,10mg,Diabetes,None,High
+P010,Amlodipine,20mg,Diabetes,Sulfa,Low
+P011,Simvastatin,40mg,Diabetes,None,Low
+P012,Lisinopril,10mg,Hypertension,Sulfa,High
+P013,Lisinopril,50mg,Diabetes,Sulfa,High
+P014,Simvastatin,50mg,Diabetes,None,Low
+P015,Simvastatin,10mg,Hypertension,None,High
+P016,Amlodipine,40mg,High Cholesterol,Sulfa,High
+P017,Simvastatin,10mg,High Cholesterol,None,High
+P018,Lisinopril,50mg,Hypertension,None,Low
+P019,Amlodipine,50mg,Hypertension,Sulfa,Low
+P020,Simvastatin,40mg,Diabetes,None,Low
+P021,Lisinopril,20mg,Hypertension,Sulfa,High
+P022,Lisinopril,40mg,High Cholesterol,None,High
+P023,Metformin,50mg,High Cholesterol,Sulfa,Low
+P024,Metformin,10mg,Diabetes,None,Low
+P025,Lisinopril,20mg,Hypertension,None,High
+P026,Simvastatin,10mg,Hypertension,None,High
+P027,Amlodipine,20mg,Hypertension,None,Low
+P028,Metformin,20mg,Hypertension,None,Low
+P029,Amlodipine,20mg,High Cholesterol,None,Low
+P030,Lisinopril,20mg,High Cholesterol,None,High
+P031,Metformin,40mg,High Cholesterol,Sulfa,Low
+P032,Metformin,40mg,Hypertension,None,Low
+P033,Amlodipine,20mg,High Cholesterol,Sulfa,High
+P034,Metformin,10mg,Diabetes,None,Low
+P035,Metformin,10mg,Hypertension,Sulfa,Low
+P036,Lisinopril,20mg,Hypertension,None,High
+P037,Amlodipine,20mg,Hypertension,None,Low
+P038,Metformin,50mg,Hypertension,Sulfa,Low
+P039,Amlodipine,20mg,Hypertension,None,Low
+P040,Simvastatin,10mg,Hypertension,None,High
+P041,Lisinopril,10mg,High Cholesterol,None,High
+P042,Lisinopril,20mg,Hypertension,None,High
+P043,Simvastatin,50mg,High Cholesterol,Sulfa,High
+P044,Amlodipine,50mg,Hypertension,Sulfa,Low
+P045,Amlodipine,40mg,Hypertension,None,Low
+P046,Simvastatin,20mg,Diabetes,None,Low
+P047,Lisinopril,40mg,Diabetes,None,High
+P048,Amlodipine,10mg,High Cholesterol,None,High
+P049,Metformin,10mg,Diabetes,None,Low
+P050,Lisinopril,10mg,Hypertension,None,High
+P051,Amlodipine,40mg,Hypertension,None,Low
+P052,Metformin,40mg,High Cholesterol,None,Low
+P053,Amlodipine,50mg,Hypertension,None,Low
+P054,Lisinopril,40mg,Hypertension,None,High
+P055,Lisinopril,10mg,High Cholesterol,None,High
+P056,Simvastatin,10mg,Diabetes,Sulfa,High
+P057,Amlodipine,10mg,Hypertension,None,High
+P058,Simvastatin,50mg,High Cholesterol,None,High
+P059,Lisinopril,20mg,Diabetes,None,High
+P060,Lisinopril,40mg,Hypertension,None,High
+P061,Simvastatin,40mg,Hypertension,Sulfa,High
+P062,Simvastatin,50mg,Hypertension,None,Low
+P063,Lisinopril,20mg,Hypertension,Sulfa,High
+P064,Lisinopril,50mg,Hypertension,None,Low
+P065,Amlodipine,40mg,Hypertension,None,Low
+P066,Metformin,20mg,Hypertension,None,Low
+P067,Simvastatin,10mg,Hypertension,None,High
+P068,Amlodipine,40mg,Hypertension,Sulfa,Low
+P069,Simvastatin,40mg,Diabetes,Sulfa,High
+P070,Lisinopril,50mg,Hypertension,None,Low
+P071,Amlodipine,50mg,Hypertension,None,Low
+P072,Amlodipine,50mg,Hypertension,None,Low
+P073,Lisinopril,10mg,Diabetes,None,High
+P074,Simvastatin,20mg,High Cholesterol,Sulfa,High
+P075,Metformin,50mg,High Cholesterol,None,Low
+P076,Metformin,40mg,Diabetes,None,Low
+P077,Amlodipine,40mg,Hypertension,None,Low
+P078,Metformin,10mg,Hypertension,Sulfa,Low
+P079,Metformin,50mg,Hypertension,None,Low
+P080,Amlodipine,10mg,Diabetes,None,Low
+P081,Amlodipine,40mg,High Cholesterol,None,Low
+P082,Metformin,50mg,Diabetes,Sulfa,Low
+P083,Simvastatin,40mg,Diabetes,None,Low
+P084,Simvastatin,50mg,High Cholesterol,None,High
+P085,Simvastatin,10mg,High Cholesterol,None,High
+P086,Metformin,20mg,High Cholesterol,None,Low
+P087,Metformin,50mg,Diabetes,None,Low
+P088,Metformin,50mg,High Cholesterol,None,Low
+P089,Amlodipine,40mg,Hypertension,None,Low
+P090,Amlodipine,50mg,Diabetes,None,Low
+P091,Lisinopril,20mg,Hypertension,None,High
+P092,Lisinopril,50mg,Hypertension,Sulfa,High
+P093,Metformin,50mg,Hypertension,None,Low
+P094,Simvastatin,40mg,Hypertension,None,Low
+P095,Metformin,10mg,High Cholesterol,None,Low
+P096,Metformin,20mg,Hypertension,None,Low
+P097,Simvastatin,40mg,Hypertension,Sulfa,High
+P098,Amlodipine,20mg,Diabetes,None,Low
+P099,Lisinopril,20mg,Hypertension,None,High
+P100,Simvastatin,10mg,Hypertension,Sulfa,High
