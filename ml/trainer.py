@@ -46,7 +46,7 @@ def train_model():
     # Save the list of feature columns for consistent use in prediction
     with open('ml/model_features.json', 'w') as f:
         json.dump(features, f)
-    print(f"Model features saved to ml/model_features.json")
+    print("Model features saved to ml/model_features.json")
 
 if __name__ == "__main__":
     train_model()
