@@ -18,6 +18,11 @@ async def ingest_data(data: dict):
     predicts the risk using the enhanced model, and returns the prediction.
     """
     try:
+        # --- Check for Unknown Medication ---
+        medication_column = 'medication_' + data.get('medication', '')
+        if medication_column not in model_features:
+            return {"error": "Unknown medication"}
+
         # --- Prepare Data for Prediction ---
         # Create a DataFrame from the incoming data
         input_df = pd.DataFrame([data])

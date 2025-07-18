@@ -6,19 +6,30 @@ import os
 # Add the scripts directory to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from scripts.emar_risk_scoring import risk_alert
+from scripts.emar_risk_scoring import score_risk
 
-def test_risk_alert_critical():
-    """Tests the 'Avoid NSAIDs' alert."""
-    row = pd.Series({'Condition': 'asthma', 'Allergy': 'nsaids'})
-    assert risk_alert(row) == '⚠️ Avoid NSAIDs'
+def test_score_risk_low_risk():
+    """Tests the score_risk function with data that should be low risk."""
+    data = {
+        'patient_id': ['P001'],
+        'medication': ['Metformin'],
+        'dose': ['20mg'],
+        'condition': ['Diabetes'],
+        'allergy': ['None']
+    }
+    df = pd.DataFrame(data)
+    df_scored = score_risk(df)
+    assert df_scored['Predicted_Risk'].iloc[0] == 'Low'
 
-def test_risk_alert_kidney():
-    """Tests the 'kidney-safe' alert."""
-    row = pd.Series({'Condition': 'kidney disease', 'Allergy': 'None'})
-    assert risk_alert(row) == '⚠️ Use kidney-safe medication'
-
-def test_risk_alert_no_risk():
-    """Tests the 'no critical risk' case."""
-    row = pd.Series({'Condition': 'Hypertension', 'Allergy': 'None'})
-    assert risk_alert(row) == '✅ No critical risk'
+def test_score_risk_high_risk():
+    """Tests the score_risk function with data that should be high risk."""
+    data = {
+        'patient_id': ['P002'],
+        'medication': ['Lisinopril'],
+        'dose': ['10mg'],
+        'condition': ['Hypertension'],
+        'allergy': ['None']
+    }
+    df = pd.DataFrame(data)
+    df_scored = score_risk(df)
+    assert df_scored['Predicted_Risk'].iloc[0] == 'High'
