@@ -53,6 +53,8 @@ def score_risk(df):
     df['Predicted_Risk'] = ["High" if p == 1 else "Low" for p in predictions]
     return df
 
+from src.database import SessionLocal, RiskReport
+
 # --- Main Execution ---
 def main():
     """Main function to generate data, score it, and save the report."""
@@ -62,11 +64,27 @@ def main():
     print("Scoring data using the enhanced AI model...")
     df_scored = score_risk(df_generated)
     
-    # Save the report
-    report_path = os.path.join("reports", "emar_risk_report.csv")
-    df_scored.to_csv(report_path, index=False)
+    # Save the report to the database
+    session = SessionLocal()
+    try:
+        for index, row in df_scored.iterrows():
+            report = RiskReport(
+                patient_id=row['patient_id'],
+                medication=row['medication'],
+                dose=row['dose'],
+                condition=row['condition'],
+                allergy=row['allergy'],
+                predicted_risk=row['Predicted_Risk']
+            )
+            session.add(report)
+        session.commit()
+        print("Enhanced EMAR Risk Report saved to database successfully.")
+    except Exception as e:
+        session.rollback()
+        print(f"Error saving to database: {e}")
+    finally:
+        session.close()
     
-    print(f"Enhanced EMAR Risk Report saved at: {report_path}")
     print("--- Report Preview ---")
     print(df_scored.head())
     print("--------------------")

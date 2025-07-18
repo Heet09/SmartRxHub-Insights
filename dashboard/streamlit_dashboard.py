@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-import os
+from sqlalchemy import create_engine
+from src.database import DATABASE_URL, RiskReport, SessionLocal
 
 st.set_page_config(
     page_title="SmartRxHub-Insights: eMAR Risk Dashboard",
@@ -12,14 +13,19 @@ st.set_page_config(
 # --- Load Data ---
 @st.cache_data
 def load_data():
-    report_path = os.path.join("reports", "emar_risk_report.csv")
-    if os.path.exists(report_path):
-        df = pd.read_csv(report_path)
-        # Assuming 'timestamp' column exists and is in a readable format
-        # If not, you might need to adjust the following line
-        # df['Timestamp'] = pd.to_datetime(df['timestamp'], unit='s')
-        return df
-    return pd.DataFrame()
+    engine = create_engine(DATABASE_URL)
+    try:
+        with SessionLocal() as session:
+            # Query all risk reports and convert to DataFrame
+            reports = session.query(RiskReport).all()
+            df = pd.DataFrame([report.__dict__ for report in reports])
+            # Drop the SQLAlchemy internal state object
+            if '_sa_instance_state' in df.columns:
+                df = df.drop(columns=['_sa_instance_state'])
+            return df
+    except Exception as e:
+        st.error(f"Error loading data from database: {e}")
+        return pd.DataFrame()
 
 df = load_data()
 
@@ -28,18 +34,18 @@ st.sidebar.title("Filters")
 if not df.empty:
     patient_id = st.sidebar.multiselect(
         "Select Patient ID:",
-        options=df["Patient_ID"].unique(),
-        default=df["Patient_ID"].unique(),
+        options=df["patient_id"].unique(),
+        default=df["patient_id"].unique(),
     )
 
     alert_level = st.sidebar.multiselect(
         "Select Alert Level:",
-        options=df["Alert"].unique(),
-        default=df["Alert"].unique(),
+        options=df["predicted_risk"].unique(),
+        default=df["predicted_risk"].unique(),
     )
 
     df_selection = df.query(
-        "Patient_ID == @patient_id & Alert == @alert_level"
+        "patient_id == @patient_id & predicted_risk == @alert_level"
     )
 else:
     st.sidebar.warning("No data available. Please run the risk scoring script.")
@@ -52,9 +58,9 @@ st.markdown("##")
 
 if not df_selection.empty:
     # --- Key Metrics ---
-    total_patients = df_selection["Patient_ID"].nunique()
+    total_patients = df_selection["patient_id"].nunique()
     total_alerts = len(df_selection)
-    high_risk_alerts = len(df_selection[df_selection["Alert"] != "✅ No critical risk"])
+    high_risk_alerts = len(df_selection[df_selection["predicted_risk"] == "High"])
 
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -70,12 +76,12 @@ if not df_selection.empty:
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Alerts per Patient")
-        alerts_per_patient = df_selection.groupby("Patient_ID")["Alert"].count().sort_values(ascending=False)
+        alerts_per_patient = df_selection.groupby("patient_id")["predicted_risk"].count().sort_values(ascending=False)
         st.bar_chart(alerts_per_patient)
 
     with col2:
         st.subheader("Alert Level Distribution")
-        alert_distribution = df_selection["Alert"].value_counts()
+        alert_distribution = df_selection["predicted_risk"].value_counts()
         st.bar_chart(alert_distribution)
 
 
