@@ -85,3 +85,4 @@ if not df_selection.empty:
 
 else:
     st.warning("No data to display based on the current filters.")
+print("No data available to display. Please run the risk scoring script to generate data.")
