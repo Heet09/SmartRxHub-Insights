@@ -1,10 +1,10 @@
 
 import pandas as pd
 #from datetime import datetime
-import os
 import joblib
 import json
 import random
+from src.database import SessionLocal, RiskReport
 
 # --- Load Model and Features ---
 model = joblib.load('ml/emar_risk_model.joblib')
@@ -52,8 +52,6 @@ def score_risk(df):
     # Add predictions back to the original DataFrame
     df['Predicted_Risk'] = ["High" if p == 1 else "Low" for p in predictions]
     return df
-
-from src.database import SessionLocal, RiskReport
 
 # --- Main Execution ---
 def main():

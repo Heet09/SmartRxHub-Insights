@@ -13,9 +13,9 @@ st.set_page_config(
 # --- Load Data ---
 @st.cache_data
 def load_data():
-    engine = create_engine(DATABASE_URL)
     try:
-        with SessionLocal() as session:
+        engine = create_engine(DATABASE_URL)
+        with SessionLocal(bind=engine) as session:
             # Query all risk reports and convert to DataFrame
             reports = session.query(RiskReport).all()
             df = pd.DataFrame([report.__dict__ for report in reports])
