@@ -22,7 +22,7 @@ This project demonstrates a strong command of:
 *   **Data Simulation:** A script to generate realistic eMAR data for testing and demonstration purposes.
 *   **AI-Powered Risk Scoring:** A machine learning model that analyzes patient and medication data to identify potential risks.
 *   **Automated Reporting:** A script that generates a daily CSV report of all risk assessments.
-*   **Interactive Dashboard:** A Streamlit dashboard to visualize patient data, medication trends, and risk alerts.
+*   **Interactive Dashboard:** A Streamlit dashboard to visualize patient data, medication trends, and risk alerts from the PostgreSQL database.
 *   **Automated CI/CD Pipeline:** A GitHub Actions workflow that automatically lints the code, trains the model, and prepares it for deployment on every push to the `main` branch.
 
 ## Technology Stack
@@ -40,7 +40,7 @@ The application consists of the following components:
 1.  **Data Simulator (`scripts/data_simulator.py`):** Continuously generates and sends eMAR data to the API.
 2.  **API (`api/main.py`):** A FastAPI application that receives data and logs it.
 3.  **ML Trainer (`ml/trainer.py`):** A script to train the eMAR risk model.
-4.  **Risk Scoring (`scripts/emar_risk_scoring.py`):** A batch process that uses the trained model to score eMAR data and generate a report.
+4.  **Risk Scoring (`scripts/emar_risk_scoring.py`):** A batch process that uses the trained model to score eMAR data and save it to the PostgreSQL database.
 5.  **Dashboard (`dashboard/streamlit_dashboard.py`):** A Streamlit application to visualize the risk report.
 6.  **CI/CD Pipeline (`.github/workflows/emar_risk_engine.yml`):** An automated workflow for continuous integration and delivery.
 
@@ -89,12 +89,12 @@ To run this project locally, follow these steps:
 
 6.  **View the dashboard:**
     ```bash
-    streamlit run dashboard/streamlit_dashboard.py
+    python -m streamlit run dashboard/streamlit_dashboard.py
     ```
 
 ## Future Improvements
 
-*   **Database Integration:** Replace the CSV-based reporting with a robust database (e.g., PostgreSQL, MongoDB) to store and manage data more efficiently.
+
 *   **User Authentication:** Implement user authentication and authorization for the dashboard and API.
 *   **Model Deployment:** Add a deployment stage to the CI/CD pipeline to automatically deploy the model to a cloud service (e.g., AWS SageMaker, Google AI Platform).
 *   **Enhanced Visualizations:** Add more advanced visualizations to the dashboard to provide deeper insights into the data.
