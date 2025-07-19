@@ -33,18 +33,35 @@ def get_sample_emar_data(medication="Metformin", dose="20mg", patient_id="patien
 
 def test_ingest_data_low_risk():
     """Tests the /ingest endpoint with data that should be low risk."""
-    data = get_sample_emar_data(medication="Metformin", medication_category="antidiabetic")
+    data = get_sample_emar_data(
+        medication="Metformin", 
+        medication_category="antidiabetic"
+    )
     response = client.post("/ingest", json=data)
     assert response.status_code == 200
-    assert response.json()["predicted_risk"] == "Low"
+    json_data = response.json()
+
+    if "predicted_risk" in json_data:
+        assert json_data["predicted_risk"] == "Low"
+    else:
+        # Fail clearly if expected known input is not recognized
+        pytest.fail(f"Expected known medication/category but got error: {json_data.get('error')}")
 
 def test_ingest_data_high_risk():
     """Tests the /ingest endpoint with data that should be high risk."""
-    # Example of high risk: antibiotic with penicillin allergy
-    data = get_sample_emar_data(medication="Lisinopril", dose="40mg", medication_category="antihypertensive")
+    data = get_sample_emar_data(
+        medication="Lisinopril", 
+        dose="40mg", 
+        medication_category="antihypertensive"
+    )
     response = client.post("/ingest", json=data)
     assert response.status_code == 200
-    assert response.json()["predicted_risk"] == "High"
+    json_data = response.json()
+
+    if "predicted_risk" in json_data:
+        assert json_data["predicted_risk"] == "High"
+    else:
+        pytest.fail(f"Expected known medication/category but got error: {json_data.get('error')}")
 
 def test_ingest_data_unknown_medication():
     """Tests the /ingest endpoint with an unknown medication."""
