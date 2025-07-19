@@ -36,8 +36,16 @@ with open('ml/model_features.json', 'r') as f:
 async def ingest_data(data: EMARData):
     try:
         data_dict = data.model_dump()
-        data_dict["medication_category"] = data_dict["medication_category"].replace(" ", "_")
-        data_dict["patient_location"] = data_dict["patient_location"].replace(" ", "_")
+        # Normalize keys used in one-hot encoding
+        data_dict["medication_category"] = data_dict["medication_category"].strip().replace(" ", "_").lower()
+        data_dict["patient_location"] = data_dict["patient_location"].strip().replace(" ", "_").lower()
+        data_dict["route"] = data_dict["route"].strip().replace(" ", "_").lower()
+        data_dict["frequency"] = data_dict["frequency"].strip().replace(" ", "_").lower()
+        data_dict["primary_diagnosis"] = data_dict["primary_diagnosis"].strip().replace(" ", "_").lower()
+        data_dict["medication"] = data_dict["medication"].strip().replace(" ", "_").lower()
+        data_dict["administration_time_of_day"] = data_dict["administration_time_of_day"].strip().replace(" ", "_").lower()
+        data_dict["sex"] = data_dict["sex"].strip().lower()
+
 
         input_df = pd.DataFrame([data_dict])
 
