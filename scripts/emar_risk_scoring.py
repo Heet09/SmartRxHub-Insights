@@ -7,7 +7,7 @@ import pandas as pd
 import joblib
 import json
 from src.database import SessionLocal, EMARData
-import requests
+#import requests
 
 # --- Load Model and Features ---
 model = joblib.load('ml/emar_risk_model.joblib')
