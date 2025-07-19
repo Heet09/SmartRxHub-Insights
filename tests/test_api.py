@@ -6,6 +6,7 @@ import os
 # Add the api directory to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+import pytest
 from api.main import app
 
 client = TestClient(app)
