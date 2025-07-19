@@ -27,6 +27,10 @@ def train_model():
     df['dose_numeric'] = df['dose'].str.extract('(\d+\.?\d*)').astype(float)
     df.drop(['dose'], axis=1, inplace=True)
 
+    # Normalize medication_category and patient_location
+    df['medication_category'] = df['medication_category'].str.replace(" ", "_")
+    df['patient_location'] = df['patient_location'].str.replace(" ", "_")
+
     # Define risk based on a combination of factors
     # This is a more realistic way to define risk for training purposes
     conditions = (
