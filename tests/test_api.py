@@ -33,7 +33,7 @@ def get_sample_emar_data(medication="Metformin", dose="20mg", patient_id="patien
 
 def test_ingest_data_low_risk():
     """Tests the /ingest endpoint with data that should be low risk."""
-    data = get_sample_emar_data()
+    data = get_sample_emar_data(medication="Metformin", medication_category="antidiabetic")
     response = client.post("/ingest", json=data)
     assert response.status_code == 200
     assert response.json()["predicted_risk"] == "Low"

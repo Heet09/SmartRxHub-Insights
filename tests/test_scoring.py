@@ -8,10 +8,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from scripts.emar_risk_scoring import score_risk
 
-def get_sample_emar_data_df(medication="Metformin", dose="20mg", patient_id="patient_1", allergies=[], primary_diagnosis="diabetes", medication_category="antidiabetic", route="oral", frequency="daily", is_prn=False, prescribing_doctor_id="doctor_1", administering_nurse_id="nurse_1", patient_location="general ward", administration_time_of_day="morning"):
+def get_sample_emar_data_df(medication="Metformin", dose="20mg", patient_id="patient_1", allergies=[], primary_diagnosis="diabetes", medication_category="antidiabetic", route="oral", frequency="daily", is_prn=False, prescribing_doctor_id="doctor_1", administering_nurse_id="nurse_1", patient_location="general ward", administration_time_of_day="morning", age=60):
     data = {
         "patient_id": [patient_id],
-        "age": [60],
+        "age": [age],
         "sex": ["female"],
         "weight": [70],
         "allergies": [allergies],
@@ -39,6 +39,6 @@ def test_score_risk_low_risk():
 def test_score_risk_high_risk():
     """Tests the score_risk function with data that should be high risk."""
     # Example of high risk: antibiotic with penicillin allergy
-    df = get_sample_emar_data_df(medication="Azithromycin", dose="250mg", medication_category="antibiotic", allergies=["penicillin"])
+    df = get_sample_emar_data_df(age=80, medication="Lisinopril", dose="40mg", medication_category="antihypertensive")
     df_scored = score_risk(df)
     assert df_scored['predicted_risk'].iloc[0] == 'High'
