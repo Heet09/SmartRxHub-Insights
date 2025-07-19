@@ -1,1 +1,1 @@
-fix: Resolve test failures by updating test data and API error handling
+fix: Update test_api.py high risk test data to match model features
