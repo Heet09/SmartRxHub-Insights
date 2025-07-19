@@ -1,1 +1,1 @@
-fix: Re-implement robust error handling in API tests
+fix: Add pytest import to test_api.py to resolve ruff F821 error
