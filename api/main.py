@@ -1,8 +1,29 @@
 
 from fastapi import FastAPI
+from pydantic import BaseModel
 import joblib
 import pandas as pd
 import json
+
+# --- Pydantic Model for Input Validation ---
+class EMARData(BaseModel):
+    patient_id: str
+    age: int
+    sex: str
+    weight: int
+    allergies: list
+    primary_diagnosis: str
+    medication: str
+    medication_category: str
+    dose: str
+    route: str
+    frequency: str
+    is_prn: bool
+    prescribing_doctor_id: str
+    administering_nurse_id: str
+    patient_location: str
+    administration_time_of_day: str
+    timestamp: float
 
 app = FastAPI()
 
@@ -12,43 +33,36 @@ with open('ml/model_features.json', 'r') as f:
     model_features = json.load(f)
 
 @app.post("/ingest")
-async def ingest_data(data: dict):
+async def ingest_data(data: EMARData):
     """
-    This endpoint receives eMAR data with patient conditions and allergies,
-    predicts the risk using the enhanced model, and returns the prediction.
+    This endpoint receives eMAR data, validates it, and returns a risk prediction.
     """
     try:
-        # --- Check for Unknown Medication ---
-        medication_column = 'medication_' + data.get('medication', '')
-        if medication_column not in model_features:
-            return {"error": "Unknown medication"}
+        # --- Convert Pydantic model to dictionary ---
+        data_dict = data.dict()
 
         # --- Prepare Data for Prediction ---
-        # Create a DataFrame from the incoming data
-        input_df = pd.DataFrame([data])
+        input_df = pd.DataFrame([data_dict])
 
-        # Feature Engineering (must match the training script)
-        input_df['dose_mg'] = input_df['dose'].str.replace('mg', '').astype(int)
-        input_df = input_df.drop(columns=['dose'])
+        # --- Feature Engineering (must match the training script) ---
+        input_df['dose_numeric'] = input_df['dose'].str.extract('(\d+\.?\d*)').astype(float)
+        input_df.drop(['dose'], axis=1, inplace=True)
 
-        # One-hot encode categorical features
-        input_encoded = pd.get_dummies(input_df)
+        categorical_cols = ['sex', 'primary_diagnosis', 'medication', 'medication_category', 'route', 'frequency', 'patient_location', 'administration_time_of_day']
+        input_encoded = pd.get_dummies(input_df, columns=categorical_cols)
 
         # Align columns with the model's features
-        # This adds missing columns (if any) and fills them with 0
-        # and ensures the order is identical to the training data.
         input_aligned = input_encoded.reindex(columns=model_features, fill_value=0)
 
-        # --- Predict Risk ---
         prediction = model.predict(input_aligned)
         risk_level = "High" if prediction[0] == 1 else "Low"
 
-        print(f"Received data: {data}, Predicted Risk: {risk_level}")
-        return {"status": "success", "data_received": data, "predicted_risk": risk_level}
+        print(f"Received data: {data_dict}, Predicted Risk: {risk_level}")
+        return {"status": "success", "data_received": data_dict, "predicted_risk": risk_level}
 
     except Exception as e:
         return {"error": str(e)}
 
 @app.get("/")
 def read_root():
-    return {"message": "SmartRxHub-Insights API is running with the enhanced ML model."}
+    return {"message": "SmartRxHub-Insights API is running. The /ingest endpoint now accepts expanded eMAR data."}

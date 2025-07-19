@@ -1,31 +1,49 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import joblib
 import json
+import numpy as np
 
-# This is a placeholder for a real dataset with more features.
-DATA = {
-    'patient_id': [i for i in range(100)],
-    'medication': ['Lisinopril', 'Metformin', 'Simvastatin', 'Amlodipine'] * 25,
-    'dose_mg': [10, 20, 40, 50] * 25,
-    'condition': ['Hypertension', 'Diabetes', 'High Cholesterol', 'Hypertension'] * 25,
-    'allergy': ['None', 'None', 'Sulfa', 'None'] * 25,
-    # 1 for high risk, 0 for low risk (example logic)
-    'risk_level': [1, 0, 1, 0, 1, 1, 0, 0, 1, 0] * 10 
-}
+# Import the data generator from our simulator script
+from scripts.data_simulator import generate_emar_data
+
+def create_dataset(num_records=1000):
+    """Creates a dataset using the enhanced data simulator."""
+    data = [generate_emar_data() for _ in range(num_records)]
+    return pd.DataFrame(data)
 
 def train_model():
     """Trains a random forest classifier on the enhanced dataset."""
-    df = pd.DataFrame(DATA)
+    df = create_dataset()
 
     # --- Feature Engineering ---
+    # Convert dose to a numerical format
+    df['dose_numeric'] = df['dose'].str.extract('(\d+\.?\d*)').astype(float)
+    df.drop(['dose'], axis=1, inplace=True)
+
+    # Define risk based on a combination of factors
+    # This is a more realistic way to define risk for training purposes
+    conditions = (
+        (df['medication_category'] == 'antibiotic') & (df['allergies'].apply(lambda x: 'penicillin' in x)),
+        (df['primary_diagnosis'] == 'diabetes') & (df['medication_category'] != 'antidiabetic'),
+        (df['age'] > 75) & (df['medication_category'] == 'antihypertensive'),
+        (df['weight'] > 90) & (df['dose_numeric'] > 500)
+    )
+    risk_levels = [1, 1, 1, 1] # High risk
+    df['risk_level'] = np.select(conditions, risk_levels, default=0) # Low risk
+
     # One-hot encode categorical features
-    df_encoded = pd.get_dummies(df, columns=['medication', 'condition', 'allergy'], drop_first=True)
+    categorical_cols = ['sex', 'primary_diagnosis', 'medication', 'medication_category', 'route', 'frequency', 'patient_location', 'administration_time_of_day']
+    df_encoded = pd.get_dummies(df, columns=categorical_cols, drop_first=True)
 
     # Define features (X) and target (y)
-    features = [col for col in df_encoded.columns if col not in ['patient_id', 'risk_level']]
+    features = [col for col in df_encoded.columns if col not in ['patient_id', 'risk_level', 'allergies', 'timestamp', 'prescribing_doctor_id', 'administering_nurse_id']]
     X = df_encoded[features]
     y = df_encoded['risk_level']
 
@@ -39,11 +57,9 @@ def train_model():
     print(f"Model Accuracy on new features: {accuracy_score(y_test, y_pred)}")
 
     # --- Save Model and Features ---
-    # Save the trained model
     joblib.dump(model, 'ml/emar_risk_model.joblib')
     print("Model saved to ml/emar_risk_model.joblib")
 
-    # Save the list of feature columns for consistent use in prediction
     with open('ml/model_features.json', 'w') as f:
         json.dump(features, f)
     print("Model features saved to ml/model_features.json")

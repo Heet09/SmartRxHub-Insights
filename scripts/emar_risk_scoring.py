@@ -1,82 +1,63 @@
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import pandas as pd
-#from datetime import datetime
 import joblib
 import json
-import random
-from src.database import SessionLocal, RiskReport
+from src.database import SessionLocal, EMARData
+import requests
 
 # --- Load Model and Features ---
 model = joblib.load('ml/emar_risk_model.joblib')
 with open('ml/model_features.json', 'r') as f:
     model_features = json.load(f)
 
-# --- Data Generation ---
-def generate_emar_data(num_records=100):
-    """Generates simulated eMAR data with conditions and allergies."""
-    patient_ids = [f'P{i:03d}' for i in range(1, num_records + 1)]
-    medications = ["Lisinopril", "Metformin", "Simvastatin", "Amlodipine"] * (num_records // 4)
-    doses = ["10mg", "20mg", "40mg", "50mg"] * (num_records // 4)
-    conditions = ["Hypertension", "Diabetes", "High Cholesterol", "Hypertension"] * (num_records // 4)
-    allergies = ["None", "None", "Sulfa", "None"] * (num_records // 4)
-    
-    random.shuffle(medications)
-    random.shuffle(doses)
-    random.shuffle(conditions)
-    random.shuffle(allergies)
-
-    data = {
-        'patient_id': patient_ids,
-        'medication': medications,
-        'dose': doses,
-        'condition': conditions,
-        'allergy': allergies
-    }
-    return pd.DataFrame(data)
-
-# --- Risk Scoring ---
 def score_risk(df):
     """Uses the loaded ML model to predict risk for the given data."""
-    # Prepare data for the model (must match the API and training script)
     input_df = df.copy()
-    input_df['dose_mg'] = input_df['dose'].str.replace('mg', '').astype(int)
-    input_df = input_df.drop(columns=['dose', 'patient_id'])
 
-    # One-hot encode and align columns
-    input_encoded = pd.get_dummies(input_df)
+    # --- Feature Engineering (must match the training script) ---
+    input_df['dose_numeric'] = input_df['dose'].str.extract('(\d+\.?\d*)').astype(float)
+    input_df.drop(['dose'], axis=1, inplace=True)
+
+    categorical_cols = ['sex', 'primary_diagnosis', 'medication', 'medication_category', 'route', 'frequency', 'patient_location', 'administration_time_of_day']
+    input_encoded = pd.get_dummies(input_df, columns=categorical_cols)
+
+    # Align columns with the model's features
     input_aligned = input_encoded.reindex(columns=model_features, fill_value=0)
 
     # Predict the risk
     predictions = model.predict(input_aligned)
     
     # Add predictions back to the original DataFrame
-    df['Predicted_Risk'] = ["High" if p == 1 else "Low" for p in predictions]
+    df['predicted_risk'] = ["High" if p == 1 else "Low" for p in predictions]
     return df
 
 # --- Main Execution ---
 def main():
-    """Main function to generate data, score it, and save the report."""
-    print("Generating enhanced simulated eMAR data...")
-    df_generated = generate_emar_data(num_records=100)
-    
-    print("Scoring data using the enhanced AI model...")
+    """Main function to fetch data, score it, and save to the database."""
+    print("Fetching data from the simulator...")
+    # This part needs to be adapted based on how we get data in a real-world scenario.
+    # For now, we'll assume we have a way to get a batch of data.
+    # In a real application, this might be a stream of data from Kafka or a batch job.
+    # We will simulate this by calling our own data generator from the simulator script.
+    from data_simulator import generate_emar_data
+    data = [generate_emar_data() for _ in range(100)]
+    df_generated = pd.DataFrame(data)
+
+    print("Scoring data using the AI model...")
     df_scored = score_risk(df_generated)
     
     # Save the report to the database
     session = SessionLocal()
     try:
         for index, row in df_scored.iterrows():
-            report = RiskReport(
-                patient_id=row['patient_id'],
-                medication=row['medication'],
-                dose=row['dose'],
-                condition=row['condition'],
-                allergy=row['allergy'],
-                predicted_risk=row['Predicted_Risk']
-            )
-            session.add(report)
+            emar_record = EMARData(**row.to_dict())
+            session.add(emar_record)
         session.commit()
-        print("Enhanced EMAR Risk Report saved to database successfully.")
+        print("EMAR Risk data saved to database successfully.")
     except Exception as e:
         session.rollback()
         print(f"Error saving to database: {e}")
