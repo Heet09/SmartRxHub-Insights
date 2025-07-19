@@ -36,7 +36,8 @@ def test_ingest_data_low_risk():
     """Tests the /ingest endpoint with data that should be low risk."""
     data = get_sample_emar_data(
         medication="Metformin", 
-        medication_category="antidiabetic"
+        medication_category="antidiabetic",
+        primary_diagnosis="hypertension"
     )
     response = client.post("/ingest", json=data)
     assert response.status_code == 200
@@ -53,7 +54,8 @@ def test_ingest_data_high_risk():
     data = get_sample_emar_data(
         medication="Lisinopril", 
         dose="40mg", 
-        medication_category="antihypertensive"
+        medication_category="antihypertensive",
+        age=80
     )
     response = client.post("/ingest", json=data)
     assert response.status_code == 200
