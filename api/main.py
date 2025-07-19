@@ -35,7 +35,7 @@ with open('ml/model_features.json', 'r') as f:
 @app.post("/ingest")
 async def ingest_data(data: EMARData):
     try:
-        data_dict = data.dict()
+        data_dict = data.model_dump()
         data_dict["medication_category"] = data_dict["medication_category"].replace(" ", "_")
         data_dict["patient_location"] = data_dict["patient_location"].replace(" ", "_")
 
