@@ -11,7 +11,7 @@ from api.main import app
 
 client = TestClient(app)
 
-def get_sample_emar_data(medication="Metformin", dose="20mg", patient_id="patient_1", allergies=[], primary_diagnosis="diabetes", medication_category="antidiabetic", route="oral", frequency="daily", is_prn=False, prescribing_doctor_id="doctor_1", administering_nurse_id="nurse_1", patient_location="general ward", administration_time_of_day="morning"):
+def get_sample_emar_data(medication="Metformin", dose="20mg", patient_id="patient_1", allergies=[], primary_diagnosis="diabetes", medication_category="antidiabetic", route="oral", frequency="daily", is_prn=False, prescribing_doctor_id="doctor_1", administering_nurse_id="nurse_1", patient_location="general ward", administration_time_of_day="morning", age=60):
     return {
         "patient_id": patient_id,
         "age": 60,
