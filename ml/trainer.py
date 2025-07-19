@@ -40,7 +40,7 @@ def train_model():
 
     # One-hot encode categorical features
     categorical_cols = ['sex', 'primary_diagnosis', 'medication', 'medication_category', 'route', 'frequency', 'patient_location', 'administration_time_of_day']
-    df_encoded = pd.get_dummies(df, columns=categorical_cols, drop_first=True)
+    df_encoded = pd.get_dummies(df, columns=categorical_cols)
 
     # Define features (X) and target (y)
     features = [col for col in df_encoded.columns if col not in ['patient_id', 'risk_level', 'allergies', 'timestamp', 'prescribing_doctor_id', 'administering_nurse_id']]
