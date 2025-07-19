@@ -62,6 +62,9 @@ async def ingest_data(data: EMARData):
         known_medications = {f.replace('medication_', '').strip() for f in model_features if f.startswith('medication_')}
         known_med_categories = {f.replace('medication_category_', '').strip() for f in model_features if f.startswith('medication_category_')}
 
+        print(f"DEBUG: Incoming medication_category: {data_dict['medication_category']}")
+        print(f"DEBUG: Known medication categories: {known_med_categories}")
+
         if data.medication.strip() not in known_medications:
             return {"error": f"Unknown medication: '{data.medication}'"}
 
