@@ -31,7 +31,6 @@ app = FastAPI()
 model = joblib.load('ml/emar_risk_model.joblib')
 with open('ml/model_features.json', 'r') as f:
     model_features = json.load(f)
-print(f"DEBUG: model_features loaded: {model_features}")
 
 @app.post("/ingest")
 async def ingest_data(data: EMARData):
@@ -62,9 +61,6 @@ async def ingest_data(data: EMARData):
         # --- Medication & Category validation BEFORE prediction ---
         known_medications = {f.replace('medication_', '').strip() for f in model_features if f.startswith('medication_')}
         known_med_categories = {f.replace('medication_category_', '').strip() for f in model_features if f.startswith('medication_category_')}
-
-        print(f"DEBUG: Incoming medication_category: {data_dict['medication_category']}")
-        print(f"DEBUG: Known medication categories: {known_med_categories}")
 
         if data.medication.strip() not in known_medications:
             return {"error": f"Unknown medication: '{data.medication}'"}
