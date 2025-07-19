@@ -38,6 +38,10 @@ def train_model():
     risk_levels = [1, 1, 1, 1] # High risk
     df['risk_level'] = np.select(conditions, risk_levels, default=0) # Low risk
 
+    # Preprocess categorical columns to replace spaces with underscores
+    df['medication_category'] = df['medication_category'].str.replace(" ", "_")
+    df['patient_location'] = df['patient_location'].str.replace(" ", "_")
+
     # One-hot encode categorical features
     categorical_cols = ['sex', 'primary_diagnosis', 'medication', 'medication_category', 'route', 'frequency', 'patient_location', 'administration_time_of_day']
     df_encoded = pd.get_dummies(df, columns=categorical_cols)
@@ -60,6 +64,7 @@ def train_model():
     joblib.dump(model, 'ml/emar_risk_model.joblib')
     print("Model saved to ml/emar_risk_model.joblib")
 
+    # Save the list of feature columns for consistent use in prediction
     with open('ml/model_features.json', 'w') as f:
         json.dump(features, f)
     print("Model features saved to ml/model_features.json")
