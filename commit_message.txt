@@ -1,1 +1,1 @@
-feat: Update data models, API, scoring, and tests for enhanced eMAR data
+fix: Resolve test failures by updating test data and API error handling
