@@ -12,7 +12,7 @@ def generate_emar_data():
         "Metformin": {"category": "antidiabetic", "routes": ["oral"], "doses": ["500mg", "850mg", "1000mg"]},
         "Simvastatin": {"category": "statin", "routes": ["oral"], "doses": ["20mg", "40mg", "80mg"]},
         "Amlodipine": {"category": "antihypertensive", "routes": ["oral"], "doses": ["5mg", "10mg"]},
-        "Levothyroxine": {"category": "thyroid hormone", "routes": ["oral", "IV"], "doses": ["25mcg", "50mcg", "100mcg"]},
+        "Levothyroxine": {"category": "thyroid_hormone", "routes": ["oral", "IV"], "doses": ["25mcg", "50mcg", "100mcg"]},
         "Azithromycin": {"category": "antibiotic", "routes": ["oral", "IV"], "doses": ["250mg", "500mg"]},
     }
     

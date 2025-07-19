@@ -1,1 +1,1 @@
-fix: Ensure all medication categories are included in model training
+fix: Align feature naming across model training, API, and scoring scripts
