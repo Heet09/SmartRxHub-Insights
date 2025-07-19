@@ -1,1 +1,1 @@
-fix: Add pytest import to test_api.py to resolve ruff F821 error
+refactor: Remove debug print statements from api/main.py
