@@ -19,7 +19,7 @@ def score_risk(df):
     input_df = df.copy()
 
     # --- Feature Engineering (must match the training script) ---
-    input_df['dose_numeric'] = input_df['dose'].str.extract('(\d+\.?\d*)').astype(float)
+    input_df['dose_numeric'] = input_df['dose'].str.extract(r'(\d+\.?\d*)').astype(float)
     input_df.drop(['dose'], axis=1, inplace=True)
 
     categorical_cols = ['sex', 'primary_diagnosis', 'medication', 'medication_category', 'route', 'frequency', 'patient_location', 'administration_time_of_day']
