@@ -45,32 +45,31 @@ async def ingest_data(data: EMARData):
         input_df = pd.DataFrame([data_dict])
 
         # --- Feature Engineering (must match the training script) ---
-        input_df['dose_numeric'] = input_df['dose'].str.extract('(\d+\.?\d*)').astype(float)
+        input_df['dose_numeric'] = input_df['dose'].str.extract(r'(\d+\.?\d*)').astype(float)
         input_df.drop(['dose'], axis=1, inplace=True)
 
-        categorical_cols = ['sex', 'primary_diagnosis', 'medication', 'medication_category', 'route', 'frequency', 'patient_location', 'administration_time_of_day']
+        # --- One-hot encode categorical variables ---
+        categorical_cols = ['sex', 'primary_diagnosis', 'medication', 'medication_category',
+                            'route', 'frequency', 'patient_location', 'administration_time_of_day']
         input_encoded = pd.get_dummies(input_df, columns=categorical_cols)
 
-        # Align columns with the model's features
+        # --- Align with model features ---
         input_aligned = input_encoded.reindex(columns=model_features, fill_value=0)
 
-        # Check for unknown medication or category before prediction
-        known_medications = {f.replace('medication_', '') for f in model_features if f.startswith('medication_')}
-        known_med_categories = {f.replace('medication_category_', '') for f in model_features if f.startswith('medication_category_')}
-
-        if data.medication not in known_medications:
-            return {"error": f"Unknown medication: '{data.medication}'"}
-        if data.medication_category not in known_med_categories:
-            return {"error": f"Unknown medication category: '{data.medication_category}'"}
-
+        # --- Prediction ---
         prediction = model.predict(input_aligned)
         risk_level = "High" if prediction[0] == 1 else "Low"
 
         print(f"Received data: {data_dict}, Predicted Risk: {risk_level}")
-        return {"status": "success", "data_received": data_dict, "predicted_risk": risk_level}
+        return {
+            "status": "success",
+            "data_received": data_dict,
+            "predicted_risk": risk_level
+        }
 
     except Exception as e:
         return {"error": str(e)}
+
 
 @app.get("/")
 def read_root():
