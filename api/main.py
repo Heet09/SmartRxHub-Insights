@@ -54,6 +54,15 @@ async def ingest_data(data: EMARData):
         # Align columns with the model's features
         input_aligned = input_encoded.reindex(columns=model_features, fill_value=0)
 
+        # Check for unknown medication or category before prediction
+        known_medications = {f.replace('medication_', '') for f in model_features if f.startswith('medication_')}
+        known_med_categories = {f.replace('medication_category_', '') for f in model_features if f.startswith('medication_category_')}
+
+        if data.medication not in known_medications:
+            return {"error": f"Unknown medication: '{data.medication}'"}
+        if data.medication_category not in known_med_categories:
+            return {"error": f"Unknown medication category: '{data.medication_category}'"}
+
         prediction = model.predict(input_aligned)
         risk_level = "High" if prediction[0] == 1 else "Low"
 
