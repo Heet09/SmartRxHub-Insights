@@ -31,6 +31,7 @@ app = FastAPI()
 model = joblib.load('ml/emar_risk_model.joblib')
 with open('ml/model_features.json', 'r') as f:
     model_features = json.load(f)
+print(f"DEBUG: model_features loaded: {model_features}")
 
 @app.post("/ingest")
 async def ingest_data(data: EMARData):

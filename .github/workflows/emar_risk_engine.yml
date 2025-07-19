@@ -26,6 +26,9 @@ jobs:
     - name: Lint with ruff
       run: ruff check .
 
+    - name: Debug model_features.json
+      run: cat ml/model_features.json
+
     - name: Run tests
       run: python -m pytest
 
