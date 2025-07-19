@@ -36,6 +36,9 @@ with open('ml/model_features.json', 'r') as f:
 async def ingest_data(data: EMARData):
     try:
         data_dict = data.dict()
+        data_dict["medication_category"] = data_dict["medication_category"].replace(" ", "_")
+        data_dict["patient_location"] = data_dict["patient_location"].replace(" ", "_")
+
         input_df = pd.DataFrame([data_dict])
 
         input_df['dose_numeric'] = input_df['dose'].str.extract(r'(\d+\.?\d*)').astype(float)
