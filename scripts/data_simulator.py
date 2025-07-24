@@ -3,7 +3,7 @@ import requests
 import time
 import random
 
-API_URL = "http://127.0.0.1:8001/ingest"
+API_URL = "http://127.0.0.1:8000/ingest"
 
 def generate_emar_data():
     """Generates a random eMAR data record with expanded fields."""

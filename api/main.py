@@ -1,9 +1,22 @@
 
-from fastapi import FastAPI
+from dotenv import load_dotenv
+load_dotenv()
+
+from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 import joblib
 import pandas as pd
 import json
+from sqlalchemy.orm import Session
+from src.database import SessionLocal, EMARData as DBM_EMARData # Renamed to avoid conflict with Pydantic model
+
+# Dependency to get the DB session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 # --- Pydantic Model for Input Validation ---
 class EMARData(BaseModel):
@@ -25,7 +38,11 @@ class EMARData(BaseModel):
     administration_time_of_day: str
     timestamp: float
 
+from chatbot.bot import Chatbot
+
 app = FastAPI()
+
+chatbot_instance = Chatbot()
 
 # --- Load Model and Features at Startup ---
 model = joblib.load('ml/emar_risk_model.joblib')
@@ -33,9 +50,35 @@ with open('ml/model_features.json', 'r') as f:
     model_features = json.load(f)
 
 @app.post("/ingest")
-async def ingest_data(data: EMARData):
+async def ingest_data(data: EMARData, db: Session = Depends(get_db)):
     try:
         data_dict = data.model_dump()
+
+        # Save to database
+        db_emar_data = DBM_EMARData(
+            patient_id=data_dict["patient_id"],
+            age=data_dict["age"],
+            sex=data_dict["sex"],
+            weight=data_dict["weight"],
+            allergies=json.dumps(data_dict["allergies"]), # Convert list to JSON string
+            primary_diagnosis=data_dict["primary_diagnosis"],
+            medication=data_dict["medication"],
+            medication_category=data_dict["medication_category"],
+            dose=data_dict["dose"],
+            route=data_dict["route"],
+            frequency=data_dict["frequency"],
+            is_prn=data_dict["is_prn"],
+            prescribing_doctor_id=data_dict["prescribing_doctor_id"],
+            administering_nurse_id=data_dict["administering_nurse_id"],
+            patient_location=data_dict["patient_location"],
+            administration_time_of_day=data_dict["administration_time_of_day"],
+            timestamp=data_dict["timestamp"],
+            predicted_risk="Unknown" # Placeholder, as prediction happens below
+        )
+        db.add(db_emar_data)
+        db.commit()
+        db.refresh(db_emar_data)
+
         # Normalize keys used in one-hot encoding
         data_dict["medication_category"] = data_dict["medication_category"].strip().replace(" ", "_").lower()
         data_dict["patient_location"] = data_dict["patient_location"].strip().replace(" ", "_").lower()
@@ -45,7 +88,6 @@ async def ingest_data(data: EMARData):
         data_dict["medication"] = data_dict["medication"].strip().replace(" ", "_").lower()
         data_dict["administration_time_of_day"] = data_dict["administration_time_of_day"].strip().replace(" ", "_").lower()
         data_dict["sex"] = data_dict["sex"].strip().lower()
-
 
         input_df = pd.DataFrame([data_dict])
 
@@ -71,6 +113,12 @@ async def ingest_data(data: EMARData):
         prediction = model.predict(input_aligned)
         risk_level = "High" if prediction[0] == 1 else "Low"
 
+        # Update predicted_risk in the database
+        db_emar_data.predicted_risk = risk_level
+        db.add(db_emar_data)
+        db.commit()
+        db.refresh(db_emar_data)
+
         print(f"Received data: {data_dict}, Predicted Risk: {risk_level}")
         return {
             "status": "success",
@@ -85,3 +133,11 @@ async def ingest_data(data: EMARData):
 @app.get("/")
 def read_root():
     return {"message": "SmartRxHub-Insights API is running. The /ingest endpoint now accepts expanded eMAR data."}
+
+@app.post("/chat")
+async def chat_with_bot(query: str):
+    try:
+        response = chatbot_instance.ask(query)
+        return {"response": response}
+    except Exception as e:
+        return {"error": str(e)}

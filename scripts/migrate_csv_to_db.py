@@ -1,5 +1,11 @@
+import sys
+import os
 import csv
-from src.database import SessionLocal, engine, Base, RiskReport
+
+# Add the project root to the Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from src.database import SessionLocal, engine, Base, EMARData
 
 def migrate_csv_to_db(csv_file_path: str):
     Base.metadata.create_all(bind=engine)  # Create tables if they don't exist
@@ -11,13 +17,13 @@ def migrate_csv_to_db(csv_file_path: str):
             # Clean up keys by stripping whitespace and converting to lowercase
             cleaned_row = {k.strip().lower(): v for k, v in row.items()}
 
-            # Create a new RiskReport object
-            report = RiskReport(
+            # Create a new EMARData object
+            report = EMARData(
                 patient_id=cleaned_row['patient_id'],
                 medication=cleaned_row.get('medication'),
                 dose=cleaned_row.get('dose'),
-                condition=cleaned_row.get('condition'),
-                allergy=cleaned_row.get('allergy'),
+                primary_diagnosis=cleaned_row.get('condition'), # Mapping 'condition' from CSV to 'primary_diagnosis'
+                allergies=cleaned_row.get('allergy'), # Mapping 'allergy' from CSV to 'allergies'
                 predicted_risk=cleaned_row.get('predicted_risk')
             )
             session.add(report)

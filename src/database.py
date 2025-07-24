@@ -1,6 +1,7 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, JSON
+from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, JSON, Text
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
+from pgvector.sqlalchemy import Vector
 
 DATABASE_URL = "postgresql://heet09:heet123@localhost:5432/smartrxhub"
 
@@ -30,6 +31,14 @@ class EMARData(Base):
     administration_time_of_day = Column(String)
     timestamp = Column(Float)
     predicted_risk = Column(String)
+
+class KnowledgeBase(Base):
+    __tablename__ = "knowledge_base"
+
+    id = Column(Integer, primary_key=True, index=True)
+    source = Column(String, index=True)  # e.g., the name of the CSV file or table
+    content = Column(Text)
+    embedding = Column(Vector(384))  # Assuming 'all-MiniLM-L6-v2' which has 384 dimensions
 
 def init_db():
     Base.metadata.create_all(bind=engine)

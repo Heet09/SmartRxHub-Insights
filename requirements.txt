@@ -10,3 +10,10 @@ pytest
 httpx
 sqlalchemy
 psycopg2-binary
+
+# Dependencies for Chatbot
+google-generativeai
+sentence-transformers
+pgvector
+python-dotenv
+langchain
