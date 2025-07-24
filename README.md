@@ -6,7 +6,7 @@
 
 SmartRxHub-Insights is a comprehensive platform designed to analyze electronic Medication Administration Records (eMAR) in real-time, identify potential risks, and provide actionable insights to healthcare providers. This project showcases a full-stack approach to building a data-driven application, from data simulation and ingestion to machine learning-based risk scoring and an interactive dashboard for visualization.
 
-<img width="1913" height="998" alt="image" src="https://github.com/user-attachments/assets/2c403c23-3ad3-4156-b377-b92f9d205ae6" />
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/e663f671-db30-4f9f-a2bf-0122e1c3e497" />
 
 
 This project demonstrates a strong command of:
