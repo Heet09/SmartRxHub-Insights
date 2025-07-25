@@ -5,7 +5,11 @@ from pydantic import BaseModel
 import joblib
 import pandas as pd
 import json
-from pydantic import BaseModel
+from sqlalchemy.orm import Session
+from src.database import SessionLocal, EMARData as DBM_EMARData # Renamed to avoid conflict with Pydantic model
+from chatbot.bot import Chatbot
+
+load_dotenv()
 
 # --- Pydantic Model for Input Validation ---
 class EMARData(BaseModel):
@@ -26,12 +30,6 @@ class EMARData(BaseModel):
     patient_location: str
     administration_time_of_day: str
     timestamp: float
-
-from sqlalchemy.orm import Session
-from src.database import SessionLocal, EMARData as DBM_EMARData # Renamed to avoid conflict with Pydantic model
-from chatbot.bot import Chatbot
-
-load_dotenv()
 
 # Dependency to get the DB session
 def get_db():
@@ -111,7 +109,7 @@ async def ingest_data(data: EMARData, db: Session = Depends(get_db)):
             return {"error": f"Unknown medication: '{data.medication}'"}
 
         if data_dict["medication_category"] not in known_med_categories:
-            return {"error": f"Unknown medication category: '{data_dict['medication_category']}'"}
+            return {"error": f"Unknown medication category: '{data_dict["medication_category"]}'"}
 
         prediction = model.predict(input_aligned)
         risk_level = "High" if prediction[0] == 1 else "Low"
