@@ -1,7 +1,5 @@
 import sys
 import os
-import json
-from sqlalchemy.orm import Session
 from sentence_transformers import SentenceTransformer
 
 # Add the project root to the Python path

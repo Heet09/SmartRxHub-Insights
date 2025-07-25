@@ -1,7 +1,4 @@
 import os
-import json
-from sqlalchemy.orm import Session
-from sqlalchemy import text
 from sentence_transformers import SentenceTransformer
 import google.generativeai as genai
 

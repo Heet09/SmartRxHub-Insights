@@ -1,7 +1,5 @@
 
 from dotenv import load_dotenv
-load_dotenv()
-
 from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 import joblib
@@ -9,6 +7,11 @@ import pandas as pd
 import json
 from sqlalchemy.orm import Session
 from src.database import SessionLocal, EMARData as DBM_EMARData # Renamed to avoid conflict with Pydantic model
+from chatbot.bot import Chatbot
+
+load_dotenv()
+
+app = FastAPI()
 
 # Dependency to get the DB session
 def get_db():
@@ -38,9 +41,6 @@ class EMARData(BaseModel):
     administration_time_of_day: str
     timestamp: float
 
-from chatbot.bot import Chatbot
-
-app = FastAPI()
 
 chatbot_instance = Chatbot()
 
