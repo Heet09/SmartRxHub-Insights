@@ -25,13 +25,15 @@ jobs:
     - name: Lint with ruff
       run: ruff check .
 
-    - name: Set up Docker Compose
+    - name: Start PostgreSQL Container
       run: |
-        sudo apt-get update
-        sudo apt-get install -y docker-compose
-
-    - name: Start Docker services
-      run: docker-compose up -d
+        docker run -d \
+          --name pgvector_db \
+          -e POSTGRES_USER=heet09 \
+          -e POSTGRES_PASSWORD=heet123 \
+          -e POSTGRES_DB=smartrxhub \
+          -p 5432:5432 \
+          pgvector/pgvector:pg13
 
     - name: Wait for database to be ready
       run: |
