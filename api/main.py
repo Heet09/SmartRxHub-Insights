@@ -5,21 +5,7 @@ from pydantic import BaseModel
 import joblib
 import pandas as pd
 import json
-from sqlalchemy.orm import Session
-from src.database import SessionLocal, EMARData as DBM_EMARData # Renamed to avoid conflict with Pydantic model
-from chatbot.bot import Chatbot
-
-load_dotenv()
-
-app = FastAPI()
-
-# Dependency to get the DB session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+from pydantic import BaseModel
 
 # --- Pydantic Model for Input Validation ---
 class EMARData(BaseModel):
@@ -41,8 +27,25 @@ class EMARData(BaseModel):
     administration_time_of_day: str
     timestamp: float
 
+from sqlalchemy.orm import Session
+from src.database import SessionLocal, EMARData as DBM_EMARData # Renamed to avoid conflict with Pydantic model
+from chatbot.bot import Chatbot
 
-chatbot_instance = Chatbot()
+load_dotenv()
+
+# Dependency to get the DB session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# Dependency to get the Chatbot instance
+def get_chatbot():
+    return Chatbot()
+
+app = FastAPI()
 
 # --- Load Model and Features at Startup ---
 model = joblib.load('ml/emar_risk_model.joblib')
@@ -135,9 +138,9 @@ def read_root():
     return {"message": "SmartRxHub-Insights API is running. The /ingest endpoint now accepts expanded eMAR data."}
 
 @app.post("/chat")
-async def chat_with_bot(query: str):
+async def chat_with_bot(query: str, chatbot: Chatbot = Depends(get_chatbot)):
     try:
-        response = chatbot_instance.ask(query)
+        response = chatbot.ask(query)
         return {"response": response}
     except Exception as e:
         return {"error": str(e)}

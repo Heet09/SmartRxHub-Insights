@@ -1,27 +1,33 @@
 import pytest
-import httpx
-from unittest.mock import patch, MagicMock
+from fastapi.testclient import TestClient
+from unittest.mock import MagicMock
+from api.main import app, get_chatbot # Import app and the dependency
 
 # Assuming FastAPI app runs on localhost:8000
 BASE_URL = "http://localhost:8000"
 
+@pytest.fixture
+def mock_chatbot():
+    mock = MagicMock()
+    mock.ask.return_value = "Mocked LLM response about patient data."
+    return mock
+
 @pytest.mark.asyncio
-async def test_chat_endpoint_mocked_llm():
-    with patch('google.generativeai.GenerativeModel') as mock_generative_model:
-        # Configure the mock LLM to return a predictable response
-        mock_instance = MagicMock()
-        mock_generative_model.return_value = mock_instance
-        mock_instance.generate_content.return_value.text = "LLM response about patient data."
+async def test_chat_endpoint_mocked_llm(mock_chatbot):
+    app.dependency_overrides[get_chatbot] = lambda: mock_chatbot
 
-        async with httpx.AsyncClient() as client:
-            test_patient_id = "patient_24" # Still relies on data being in DB for context retrieval
-            query = f"What is the primary diagnosis for {test_patient_id}?"
-            response = await client.post(f"{BASE_URL}/chat", params={"query": query})
+    with TestClient(app) as client:
+        test_patient_id = "patient_24" # Still relies on data being in DB for context retrieval
+        query = f"What is the primary diagnosis for {test_patient_id}?"
+        response = client.post("/chat", params={"query": query})
 
-            assert response.status_code == 200
-            assert "response" in response.json()
-            assert isinstance(response.json()["response"], str)
-            assert response.json()["response"] == "LLM response about patient data."
+        assert response.status_code == 200
+        assert "response" in response.json()
+        assert isinstance(response.json()["response"], str)
+        assert response.json()["response"] == "Mocked LLM response about patient data."
 
-            # Verify that generate_content was called
-            mock_instance.generate_content.assert_called_once()
+        # Verify that the ask method was called
+        mock_chatbot.ask.assert_called_once_with(query)
+
+    # Clean up the dependency override
+    app.dependency_overrides = {}
