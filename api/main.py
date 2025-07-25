@@ -109,7 +109,7 @@ async def ingest_data(data: EMARData, db: Session = Depends(get_db)):
             return {"error": f"Unknown medication: '{data.medication}'"}
 
         if data_dict["medication_category"] not in known_med_categories:
-            return {"error": f"Unknown medication category: '{data_dict["medication_category"]}'"}
+            return {"error": f"Unknown medication category: '{data_dict['medication_category']}'"}
 
         prediction = model.predict(input_aligned)
         risk_level = "High" if prediction[0] == 1 else "Low"
