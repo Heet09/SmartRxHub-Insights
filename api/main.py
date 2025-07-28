@@ -1,4 +1,3 @@
-
 import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
@@ -10,10 +9,7 @@ from sqlalchemy.orm import Session
 from src.database import SessionLocal, EMARData as DBM_EMARData # Renamed to avoid conflict with Pydantic model
 from chatbot.bot import Chatbot
 
-print(f"DEBUG: Current working directory: {os.getcwd()}")
-load_dotenv_result = load_dotenv()
-print(f"DEBUG: load_dotenv() result: {load_dotenv_result}")
-print(f"DEBUG: GEMINI_API_KEY after load_dotenv(): {os.getenv('GEMINI_API_KEY')}")
+load_dotenv()
 
 # Dependency to get the DB session
 def get_db():
@@ -49,9 +45,6 @@ def get_chatbot():
     if not gemini_api_key:
         raise ValueError("GEMINI_API_KEY environment variable is not set.")
     return Chatbot(gemini_api_key=gemini_api_key)
-
-from fastapi import FastAPI, Depends
-from chatbot.bot import Chatbot
 
 app = FastAPI()
 
