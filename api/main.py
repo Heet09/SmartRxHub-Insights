@@ -1,4 +1,5 @@
 
+import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
 from pydantic import BaseModel
@@ -9,7 +10,18 @@ from sqlalchemy.orm import Session
 from src.database import SessionLocal, EMARData as DBM_EMARData # Renamed to avoid conflict with Pydantic model
 from chatbot.bot import Chatbot
 
-load_dotenv()
+print(f"DEBUG: Current working directory: {os.getcwd()}")
+load_dotenv_result = load_dotenv()
+print(f"DEBUG: load_dotenv() result: {load_dotenv_result}")
+print(f"DEBUG: GEMINI_API_KEY after load_dotenv(): {os.getenv('GEMINI_API_KEY')}")
+
+# Dependency to get the DB session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 # --- Pydantic Model for Input Validation ---
 class EMARData(BaseModel):
@@ -31,17 +43,15 @@ class EMARData(BaseModel):
     administration_time_of_day: str
     timestamp: float
 
-# Dependency to get the DB session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 # Dependency to get the Chatbot instance
 def get_chatbot():
-    return Chatbot()
+    gemini_api_key = os.getenv("GEMINI_API_KEY")
+    if not gemini_api_key:
+        raise ValueError("GEMINI_API_KEY environment variable is not set.")
+    return Chatbot(gemini_api_key=gemini_api_key)
+
+from fastapi import FastAPI, Depends
+from chatbot.bot import Chatbot
 
 app = FastAPI()
 
@@ -133,7 +143,7 @@ async def ingest_data(data: EMARData, db: Session = Depends(get_db)):
 
 @app.get("/")
 def read_root():
-    return {"message": "SmartRxHub-Insights API is running. The /ingest endpoint now accepts expanded eMAR data."}
+    return {"message": "SmartRxHub-Insights API is running."}
 
 @app.post("/chat")
 async def chat_with_bot(query: str, chatbot: Chatbot = Depends(get_chatbot)):

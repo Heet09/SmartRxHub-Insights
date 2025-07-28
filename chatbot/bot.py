@@ -8,13 +8,11 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.database import SessionLocal, KnowledgeBase
 
-# Configure Gemini API (replace with your actual API key or environment variable)
-# It's recommended to load this from an environment variable for security
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "YOUR_GEMINI_API_KEY_HERE")
-genai.configure(api_key=GEMINI_API_KEY)
-
 class Chatbot:
-    def __init__(self):
+    def __init__(self, gemini_api_key: str):
+        if not gemini_api_key:
+            raise ValueError("Gemini API key is not provided.")
+        genai.configure(api_key=gemini_api_key)
         self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
         self.llm = genai.GenerativeModel('models/gemini-1.5-flash-latest')
 
@@ -49,7 +47,7 @@ class Chatbot:
             return response.text
         except Exception as e:
             print(f"Error generating LLM response: {e}")
-            return "I'm sorry, I encountered an error while trying to generate a response."
+            return f"I'm sorry, I encountered an error while trying to generate a response: {e}"
 
 if __name__ == "__main__":
     # Example Usage (for testing the chatbot logic directly)
